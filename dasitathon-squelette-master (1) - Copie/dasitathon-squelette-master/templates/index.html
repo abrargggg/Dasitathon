@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formulaire avec animation d'argent tombant</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes fall {
+            0% { top: -10%; opacity: 1; }
+            100% { top: 110%; opacity: 0; }
+        }
+
+        .money {
+            position: absolute;
+            display: block;
+            top: -10%;
+            pointer-events: none;
+            animation: fall 5s infinite linear;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            background-color: #f3f3f3;
+        }
+
+        form {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"],
+        input[type="file"],
+        input[type="submit"] {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Image à afficher -->
+  
+    <img src="{{ url_for('static', filename='money.png') }}" alt="Image d'argent" class="money">
+
+    <!-- Formulaire -->
+    <form action="{{ url_for('submit') }}" method="post" enctype="multipart/form-data">
+        <input type="text" name="text" placeholder="Entrez du texte">
+        <input type="file" name="file" accept="application/pdf">
+        <input type="submit" value="Envoyer">
+    </form>
+
+    <!-- Script pour l'animation d'argent tombant -->
+    <script>
+        function createMoney() {
+            var money = document.createElement('img');
+            money.src = "{{ url_for('static', filename='money.png') }}"; // Chemin de l'image
+            money.classList.add('money');
+            document.body.appendChild(money);
+            money.style.left = Math.random() * 100 + 'vw';
+            money.style.animationDuration = Math.random() * 3 + 4 + 's'; // Durée aléatoire entre 4 et 7 secondes
+            money.style.animationDelay = '-' + Math.random() * 5 + 's'; // Délai de démarrage aléatoire
+            money.style.width = Math.random() * 20 + 10 + 'px'; // Taille aléatoire entre 10px et 30px
+        }
+
+        // Créer de l'argent toutes les 200 millisecondes
+        setInterval(createMoney, 200);
+
+        // Supprimer l'argent qui a fini de tomber pour nettoyer le DOM
+        setInterval(function() {
+            var moneys = document.querySelectorAll('.money');
+            for (var i = 0; i < moneys.length; i++) {
+                if (parseInt(moneys[i].style.top) > 100) {
+                    moneys[i].parentNode.removeChild(moneys[i]);
+                }
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

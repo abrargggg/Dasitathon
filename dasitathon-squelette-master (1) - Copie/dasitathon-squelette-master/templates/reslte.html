@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>Résultats</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        canvas {
+            width: 80px;
+            height: 80px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Résultats</h1>
+
+    <h2>Diagramme circulaire des types de transactions</h2>
+    <canvas id="transactionsChart" width="80" height="80"></canvas>
+
+    <h2>Graphique en ligne des tendances</h2>
+    <canvas id="tendancesChart" width="80" height="80"></canvas>
+
+    <h2>Graphique à bulles des ventes par produit</h2>
+    <canvas id="ventesChart" width="80" height="80"></canvas>
+     
+    <h2>Diagramme radar des performances de produits</h2>
+    <canvas id="radarChart" width="80" height="80"></canvas>
+
+    <h2>Graphique en barres des types de transactions</h2>
+    <canvas id="transactionsBarChart" width="80" height="80"></canvas>
+
+    <h2>Graphique en anneau des types de transactions</h2>
+    <canvas id="transactionsPieChart" width="80" height="80"></canvas>
+
+    <h2>Conseils pour mieux économiser</h2>
+    <div id="conseils">
+        <p>Vos dépenses sont importantes. Voici quelques conseils pour mieux gérer vos dépenses :</p>
+        <ul>
+            <li>Alimentation : Planifiez vos repas à l'avance et recherchez des offres spéciales pour économiser sur vos achats alimentaires.</li>
+            <li>Transport : Utilisez les transports en commun ou envisagez le covoiturage pour réduire les coûts de déplacement.</li>
+            <li>Loisirs : Recherchez des activités gratuites ou à coût réduit pour vos loisirs et divertissements.</li>
+            <li>Logement : Identifiez des moyens d'économiser sur les factures d'électricité, d'eau et autres dépenses liées au logement.</li>
+        </ul>
+    </div>
+
+
+    <script>
+        var transactionsData = {{ transactions_par_type | tojson }};
+        var depensesData = {{ depenses_par_type | tojson }};
+
+        var transactionsCtx = document.getElementById('transactionsChart').getContext('2d');
+        var transactionsChart = new Chart(transactionsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(transactionsData),
+                datasets: [{
+                    label: 'Transactions par type',
+                    data: Object.values(transactionsData),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)',
+                        'rgba(255, 159, 64, 0.8)'
+                    ],
+                }]
+            }
+        });
+
+        var tendancesData = {
+            'Janvier': 300,
+            'Février': 450,
+            'Mars': 200,
+            'Avril': 600,
+            'Mai': 800,
+            'Juin': 800,
+            'Juillet': 500
+        };
+
+        var tendancesCtx = document.getElementById('tendancesChart').getContext('2d');
+        var tendancesChart = new Chart(tendancesCtx, {
+            type: 'line',
+            data: {
+                labels: Object.keys(tendancesData),
+                datasets: [{
+                    label: 'Tendances mensuelles',
+                    data: Object.values(tendancesData),
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: false
+                        }
+                    }]
+                }
+            }
+        });
+
+        var ventesCtx = document.getElementById('ventesChart').getContext('2d');
+        var ventesChart = new Chart(ventesCtx, {
+            type: 'bubble',
+            data: {
+                datasets: [{
+                    label: 'Ventes par produit',
+                    data: [
+                    {x: 10, y: 20, r: 5},
+                    {x: 5, y: 15, r: 10},
+                    {x: 8, y: 18, r: 7},
+                    {x: 12, y: 25, r: 6},
+                    {x: 6, y: 12, r: 8},
+                    {x: 15, y: 30, r: 9},
+                    {x: 9, y: 22, r: 11},
+                    {x: 18, y: 35, r: 7},
+                    {x: 11, y: 28, r: 10},
+                    {x: 20, y: 40, r: 8},
+                    {x: 14, y: 32, r: 12},
+                    {x: 22, y: 38, r: 6},
+                    {x: 25, y: 45, r: 11},
+                    {x: 30, y: 50, r: 9},
+                    {x: 28, y: 48, r: 7},
+                    {x: 26, y: 46, r: 10},
+                    {x: 24, y: 44, r: 8},
+                    {x: 32, y: 52, r: 12},
+                    {x: 36, y: 56, r: 6},
+                    {x: 38, y: 58, r: 11}
+                        
+                    ],
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                }]
+                
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Valeur Y'
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Valeur X'
+                        }
+                    }]
+                }
+            }
+        });
+
+        var radarData = {
+            labels: ['Ventes', 'Stock', 'Popularité', 'Satisfaction', 'Rentabilité'],
+            datasets: [
+                {
+                    label: 'Produit A',
+                    data: [65, 59, 90, 81, 56],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    pointBackgroundColor: 'rgba(255, 99, 132, 1)'
+                },
+                {
+                    label: 'Produit B',
+                    data: [28, 48, 40, 19, 96],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    pointBackgroundColor: 'rgba(54, 162, 235, 1)'
+                }
+            ]
+        };
+
+        var radarCtx = document.getElementById('radarChart').getContext('2d');
+        var radarChart = new Chart(radarCtx, {
+            type: 'radar',
+            data: radarData,
+            options: {
+                scale: {
+                    angleLines: {
+                        display: false
+                    }
+                }
+            }
+        });
+         // Ajout du graphique en barres des types de transactions
+         var transactionsBarCtx = document.getElementById('transactionsBarChart').getContext('2d');
+         var transactionsBarChart = new Chart(transactionsBarCtx, {
+             type: 'bar',
+             data: {
+                 labels: Object.keys(transactionsData),
+                 datasets:  [{
+                     label: 'Répartition des transactions par type',
+                     data: Object.values(transactionsData),
+                     backgroundColor: 'rgba(54, 162, 235, 0.8)', // Couleur des barres
+                     borderColor: 'rgba(54, 162, 235, 1)', // Couleur des bordures
+                     borderWidth: 1
+                 }]
+             },
+             options: {
+                 scales: {
+                     yAxes: [{
+                         ticks: {
+                             beginAtZero: true
+                         }
+                     }]
+                 }
+             }
+         });
+         var transactionsPieCtx = document.getElementById('transactionsPieChart').getContext('2d');
+         var transactionsPieChart = new Chart(transactionsPieCtx, {
+             type: 'pie',
+             data: {
+                 labels: Object.keys(transactionsData),
+                 datasets: [{
+                     label: 'Répartition des transactions par type',
+                     data: Object.values(transactionsData),
+                     backgroundColor: [
+                         'rgba(255, 99, 132, 0.8)',
+                         'rgba(54, 162, 235, 0.8)',
+                         'rgba(255, 206, 86, 0.8)',
+                         'rgba(75, 192, 192, 0.8)',
+                         'rgba(153, 102, 255, 0.8)',
+                         'rgba(255, 159, 64, 0.8)'
+                     ],
+                 }]
+             }
+         });
+
+   
+        </script>
+ </body>
+</html>
